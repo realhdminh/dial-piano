@@ -38,11 +38,11 @@ async function handleReady() {
       <p class="mt-1 text-sm text-white/40">Acoustic piano · dial pad</p>
     </header>
 
-    <div class="flex w-full max-w-md flex-col items-center gap-5 sm:gap-6">
+    <div class="flex w-full max-w-md flex-col items-center gap-4 sm:gap-5 md:gap-6">
       <ControlPanel v-model:extended="extended" />
 
       <div
-        class="w-full rounded-3xl border border-glass-border bg-glass p-3 backdrop-blur-xl sm:p-4"
+        class="w-full max-w-62 rounded-2xl border border-glass-border bg-glass p-2 backdrop-blur-xl sm:max-w-70 sm:rounded-3xl sm:p-3 md:max-w-md md:p-4"
       >
         <DialPad :extended="extended" :accent-color="accentColor" />
       </div>

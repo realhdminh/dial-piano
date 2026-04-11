@@ -61,7 +61,7 @@ function onPointerCancel(e: PointerEvent) {
 
 <template>
   <button
-    class="dial-key group relative flex cursor-pointer select-none flex-col items-center justify-center rounded-2xl border backdrop-blur-xl transition-all duration-150"
+    class="dial-key group relative flex min-h-[44px] min-w-0 cursor-pointer select-none flex-col items-center justify-center rounded-xl border backdrop-blur-xl transition-all duration-150 sm:min-h-0 sm:rounded-2xl"
     :class="[
       isPressed
         ? 'scale-95 border-glass-border-bright bg-glass-light animate-glow-pulse'
@@ -74,12 +74,12 @@ function onPointerCancel(e: PointerEvent) {
     @contextmenu.prevent
   >
     <span
-      class="text-2xl font-bold transition-colors duration-150 sm:text-3xl"
+      class="text-lg font-bold transition-colors duration-150 sm:text-2xl md:text-3xl"
       :style="{ color: isPressed ? accentColor : 'rgba(255,255,255,0.9)' }"
     >
       {{ label }}
     </span>
-    <span class="mt-0.5 text-[10px] tracking-wider text-white/30 sm:text-xs">
+    <span class="mt-0.5 text-[9px] tracking-wider text-white/30 sm:text-[10px] md:text-xs">
       {{ note }}
     </span>
 
