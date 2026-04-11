@@ -91,14 +91,14 @@ public/
 
 ### GitHub Actions
 
-Pushes to **`main`** run [`.github/workflows/deploy-cloudflare-pages.yml`](.github/workflows/deploy-cloudflare-pages.yml). That job uses **npm** on the runner (`npm ci` + `package-lock.json`) so the workflow stays self-contained; your day-to-day dev stays on **Bun** above.
+Pushes to **`main`** run [`.github/workflows/deploy-cloudflare-pages.yml`](.github/workflows/deploy-cloudflare-pages.yml). That job uses **Bun** on the runner (`bun install --frozen-lockfile` + `bun.lock`), same stack as local dev.
 
 ### Cloudflare Pages (Git)
 
 1. Connect the repository in the Cloudflare dashboard.
-2. **Build command:** `bun run build` (or `npm run build` if you prefer npm on Pages).
+2. **Build command:** `bun run build` (install **Bun** in the Pages build image or use a Bun-based preset if available).
 3. **Output directory:** `dist`  
-4. **Environment:** install Bun or pin Node per your build command (see `package.json` → `engines` if using Node).
+4. **Environment:** Bun is the supported path for this repo; Node-only installs may work but are not documented here.
 5. `public/_redirects` is copied into `dist` so client routes resolve to `index.html` where needed.
 
 ### Wrangler CLI (local)
