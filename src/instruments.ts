@@ -1,2 +1,2 @@
-/** UI accent (header “Piano” highlight, key glow, panels). Piano-only build. */
-export const PIANO_ACCENT = 'oklch(75% 0.18 220)'
+/** UI accent — electric cyan/blue (keys, chrome, glow). Piano-only build. */
+export const PIANO_ACCENT = 'oklch(78% 0.24 205)'

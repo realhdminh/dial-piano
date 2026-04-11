@@ -1,22 +1,16 @@
 import { ref, onUnmounted } from 'vue'
 import { liveQuery } from 'dexie'
 import type { RecordedEvent } from '@/composables/useRecorder'
-import {
-  db,
-  ensureDialPianoDbReady,
-  addTrack,
-  removeTrack,
-  type Track,
-} from '@/db/dialPianoDb'
+import { db, addTrack, removeTrack, type Track } from '@/db/dialPianoDb'
 
 export type { Track } from '@/db/dialPianoDb'
 
 export function useTracks() {
   const tracks = ref<Track[]>([])
 
-  void ensureDialPianoDbReady()
-
-  const subscription = liveQuery(() => db.tracks.orderBy('createdAt').reverse().toArray()).subscribe({
+  const subscription = liveQuery(() =>
+    db.tracks.orderBy('createdAt').reverse().toArray(),
+  ).subscribe({
     next(rows) {
       tracks.value = rows
     },
@@ -30,7 +24,6 @@ export function useTracks() {
   })
 
   async function saveTrack(name: string, events: readonly RecordedEvent[]): Promise<void> {
-    await ensureDialPianoDbReady()
     const trimmed = name.trim()
     const count = await db.tracks.count()
     const resolvedName = trimmed || `Track ${count + 1}`

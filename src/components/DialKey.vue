@@ -61,11 +61,11 @@ function onPointerCancel(e: PointerEvent) {
 
 <template>
   <button
-    class="dial-key group relative flex min-h-[44px] min-w-0 cursor-pointer select-none flex-col items-center justify-center rounded-xl border backdrop-blur-xl transition-all duration-150 sm:min-h-0 sm:rounded-2xl"
+    class="dial-key group relative flex w-full min-h-[44px] min-w-0 cursor-pointer select-none items-stretch overflow-hidden rounded-xl border border-white/9 bg-zinc-950/85 text-left transition-[border-color,background-color,box-shadow] duration-150 sm:min-h-0"
     :class="[
       isPressed
-        ? 'scale-95 border-glass-border-bright bg-glass-light animate-glow-pulse'
-        : 'border-glass-border bg-glass hover:bg-glass-light hover:border-glass-border-bright',
+        ? 'border-white/20 bg-zinc-900/95 animate-glow-pulse'
+        : 'hover:border-white/16 hover:bg-zinc-900/70',
     ]"
     :style="glowStyle"
     @pointerdown.prevent="onPointerDown"
@@ -73,15 +73,21 @@ function onPointerCancel(e: PointerEvent) {
     @pointercancel="onPointerCancel"
     @contextmenu.prevent
   >
-    <span
-      class="text-lg font-bold transition-colors duration-150 sm:text-2xl md:text-3xl"
-      :style="{ color: isPressed ? accentColor : 'rgba(255,255,255,0.9)' }"
+    <div
+      class="relative z-1 flex w-full flex-1 items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-2.5"
     >
-      {{ label }}
-    </span>
-    <span class="mt-0.5 text-[9px] tracking-wider text-white/30 sm:text-[10px] md:text-xs">
-      {{ note }}
-    </span>
+      <span
+        class="text-xl font-black tracking-tighter tabular-nums transition-colors duration-150 sm:text-2xl md:text-[1.7rem]"
+        :style="{ color: isPressed ? accentColor : 'oklch(96% 0.01 270)' }"
+      >
+        {{ label }}
+      </span>
+      <span
+        class="shrink-0 font-mono text-[9px] font-medium tabular-nums tracking-wide text-white/32 sm:text-[10px]"
+      >
+        {{ note }}
+      </span>
+    </div>
 
     <NoteTrail
       v-for="trailId in activeTrails"
@@ -98,6 +104,6 @@ function onPointerCancel(e: PointerEvent) {
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
-  aspect-ratio: 1;
+  aspect-ratio: 8 / 5;
 }
 </style>

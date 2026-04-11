@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-glass: oklch(100% 0 0 / 0.06);
@@ -12,7 +12,7 @@
   --color-neon-pink: oklch(65% 0.28 350);
   --color-neon-green: oklch(80% 0.3 140);
 
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
 
   --animate-glow-pulse: glow-pulse 0.6s ease-out;
   --animate-note-fly: note-fly 0.6s ease-out forwards;
@@ -22,14 +22,19 @@
 
   @keyframes glow-pulse {
     0% {
-      box-shadow: 0 0 8px var(--glow-color, var(--color-neon-blue));
+      box-shadow:
+        0 0 0 1px color-mix(in oklch, var(--glow-color, var(--color-neon-blue)), transparent 40%),
+        0 0 16px color-mix(in oklch, var(--glow-color, var(--color-neon-blue)), transparent 55%);
     }
     50% {
-      box-shadow: 0 0 24px var(--glow-color, var(--color-neon-blue)),
-        0 0 48px color-mix(in oklch, var(--glow-color, var(--color-neon-blue)), transparent 60%);
+      box-shadow:
+        0 0 0 1px color-mix(in oklch, var(--glow-color, var(--color-neon-blue)), transparent 20%),
+        0 0 28px color-mix(in oklch, var(--glow-color, var(--color-neon-blue)), transparent 45%);
     }
     100% {
-      box-shadow: 0 0 4px color-mix(in oklch, var(--glow-color, var(--color-neon-blue)), transparent 70%);
+      box-shadow:
+        0 0 0 1px transparent,
+        0 0 0 transparent;
     }
   }
 
@@ -80,8 +85,16 @@ body {
 }
 
 body {
-  background: linear-gradient(145deg, oklch(12% 0.03 270), oklch(8% 0.02 250), oklch(5% 0.01 230));
-  color: oklch(90% 0 0);
+  background-color: oklch(6% 0.02 270);
+  background-image:
+    radial-gradient(ellipse 100% 70% at 50% -25%, oklch(32% 0.14 255 / 0.28), transparent 55%),
+    linear-gradient(
+      180deg,
+      oklch(9% 0.025 275) 0%,
+      oklch(5.5% 0.02 280) 45%,
+      oklch(5% 0.015 285) 100%
+    );
+  color: oklch(96% 0.01 270);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

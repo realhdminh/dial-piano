@@ -44,18 +44,12 @@ export function useRecorder(): Recorder {
 
   function recordAttack(note: string) {
     if (!isRecording.value) return
-    events.value = [
-      ...events.value,
-      { note, time: performance.now() - startTime, type: 'attack' },
-    ]
+    events.value = [...events.value, { note, time: performance.now() - startTime, type: 'attack' }]
   }
 
   function recordRelease(note: string) {
     if (!isRecording.value) return
-    events.value = [
-      ...events.value,
-      { note, time: performance.now() - startTime, type: 'release' },
-    ]
+    events.value = [...events.value, { note, time: performance.now() - startTime, type: 'release' }]
   }
 
   function play(

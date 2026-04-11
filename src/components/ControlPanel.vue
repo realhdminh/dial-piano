@@ -1,31 +1,45 @@
 <script setup lang="ts">
-import { Grid3x3 } from '@lucide/vue'
-
 defineProps<{
   extended: boolean
+  accentColor: string
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   'update:extended': [value: boolean]
 }>()
 </script>
 
 <template>
-  <div class="control-panel flex w-full max-w-62 flex-col gap-2 sm:max-w-md sm:gap-3">
-    <div class="flex flex-wrap items-center justify-center gap-2">
-      <button
-        class="flex cursor-pointer items-center gap-1.5 rounded-xl border px-2.5 py-2 text-xs font-medium backdrop-blur-xl transition-all duration-150 sm:gap-2 sm:px-3 sm:text-sm"
-        :class="
-          extended
-            ? 'border-glass-border-bright bg-glass-light text-white'
-            : 'border-glass-border bg-glass text-white/50 hover:text-white/80'
-        "
-        type="button"
-        @click="emit('update:extended', !extended)"
-      >
-        <Grid3x3 :size="14" />
-        <span>18 Keys</span>
-      </button>
-    </div>
+  <div
+    class="relative isolate inline-flex h-9 w-30 shrink-0 rounded-lg border border-white/10 bg-black/55 p-px ring-1 ring-inset ring-white/5"
+    role="group"
+    aria-label="Keyboard layout"
+  >
+    <span
+      aria-hidden="true"
+      class="pointer-events-none absolute bottom-px left-px top-px z-0 w-[calc(50%-2px)] rounded-md opacity-95 shadow-[0_1px_8px_rgba(0,0,0,0.35)] transition-transform duration-200 ease-[cubic-bezier(0.33,1,0.68,1)]"
+      :class="extended ? 'translate-x-[calc(100%+2px)]' : 'translate-x-0'"
+      :style="{ backgroundColor: accentColor }"
+    />
+    <button
+      type="button"
+      class="relative z-10 flex-1 rounded-md py-1.5 text-center text-[11px] font-bold tabular-nums tracking-tight transition-colors duration-150"
+      :class="!extended ? 'text-zinc-950' : 'text-white/45 hover:text-white/70'"
+      :aria-pressed="!extended"
+      aria-label="12 keys"
+      @click="$emit('update:extended', false)"
+    >
+      12
+    </button>
+    <button
+      type="button"
+      class="relative z-10 flex-1 rounded-md py-1.5 text-center text-[11px] font-bold tabular-nums tracking-tight transition-colors duration-150"
+      :class="extended ? 'text-zinc-950' : 'text-white/45 hover:text-white/70'"
+      :aria-pressed="extended"
+      aria-label="18 keys"
+      @click="$emit('update:extended', true)"
+    >
+      18
+    </button>
   </div>
 </template>

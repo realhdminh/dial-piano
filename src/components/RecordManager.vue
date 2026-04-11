@@ -79,8 +79,8 @@ function formatDate(ts: number): string {
     <div class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
       <button
         type="button"
-        class="flex cursor-pointer items-center gap-1.5 rounded-xl border border-glass-border bg-glass px-2.5 py-2 text-xs font-medium backdrop-blur-xl transition-all duration-150 hover:border-glass-border-bright hover:bg-glass-light sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
-        :class="recorder.isRecording.value ? 'text-red-400' : 'text-white/70'"
+        class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 bg-zinc-950/70 px-2.5 py-2 text-xs font-semibold tracking-tight transition-colors duration-150 hover:border-white/18 hover:bg-zinc-900/80 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
+        :class="recorder.isRecording.value ? 'text-red-400' : 'text-white/75'"
         @click="handleRecord"
       >
         <Circle v-if="!recorder.isRecording.value" :size="14" class="sm:h-4 sm:w-4" />
@@ -90,12 +90,17 @@ function formatDate(ts: number): string {
 
       <button
         type="button"
-        class="flex cursor-pointer items-center gap-1.5 rounded-xl border border-glass-border bg-glass px-2.5 py-2 text-xs font-medium backdrop-blur-xl transition-all duration-150 hover:border-glass-border-bright hover:bg-glass-light disabled:cursor-not-allowed disabled:opacity-30 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
-        :class="recorder.isPlaying.value ? 'text-neon-green' : 'text-white/70'"
+        class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 bg-zinc-950/70 px-2.5 py-2 text-xs font-semibold tracking-tight transition-colors duration-150 hover:border-white/18 hover:bg-zinc-900/80 disabled:cursor-not-allowed disabled:opacity-30 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
+        :class="recorder.isPlaying.value ? 'text-neon-green' : 'text-white/75'"
         :disabled="recorder.isRecording.value || (!hasEvents && !recorder.isPlaying.value)"
         @click="handlePlay"
       >
-        <Square v-if="recorder.isPlaying.value" :size="14" class="sm:h-4 sm:w-4" fill="currentColor" />
+        <Square
+          v-if="recorder.isPlaying.value"
+          :size="14"
+          class="sm:h-4 sm:w-4"
+          fill="currentColor"
+        />
         <Play v-else :size="14" class="sm:h-4 sm:w-4" />
         {{ recorder.isPlaying.value ? 'Stop' : 'Play' }}
       </button>
@@ -103,7 +108,7 @@ function formatDate(ts: number): string {
       <button
         v-if="hasEvents && !recorder.isRecording.value"
         type="button"
-        class="flex cursor-pointer items-center gap-1.5 rounded-xl border border-glass-border bg-glass px-2.5 py-2 text-xs font-medium text-white/70 backdrop-blur-xl transition-all duration-150 hover:border-glass-border-bright hover:bg-glass-light sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
+        class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 bg-zinc-950/70 px-2.5 py-2 text-xs font-semibold tracking-tight text-white/75 transition-colors duration-150 hover:border-white/18 hover:bg-zinc-900/80 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
         @click="openSaveDialog"
       >
         <Save :size="14" class="sm:h-4 sm:w-4" />
@@ -113,25 +118,25 @@ function formatDate(ts: number): string {
 
     <p
       v-if="hasEvents && !recorder.isRecording.value"
-      class="px-1 text-center text-[10px] leading-snug text-white/35 sm:text-xs"
+      class="px-1 text-center font-mono text-[10px] leading-snug text-white/38 sm:text-xs"
     >
       Play previews this take. Save adds it to the list; tap a row to replay a saved track.
     </p>
 
     <div
       v-if="showSaveDialog"
-      class="mx-auto flex w-full max-w-xs items-center gap-1.5 rounded-xl border border-glass-border bg-glass p-1.5 backdrop-blur-xl sm:gap-2 sm:p-2"
+      class="mx-auto flex w-full max-w-xs items-center gap-1.5 rounded-xl border border-white/10 bg-zinc-950/80 p-1.5 ring-1 ring-inset ring-white/4 sm:gap-2 sm:p-2"
     >
       <input
         v-model="trackName"
         type="text"
         placeholder="Track name…"
-        class="min-w-0 flex-1 rounded-lg border border-glass-border bg-transparent px-2 py-1.5 text-xs text-white placeholder-white/30 outline-none focus:border-glass-border-bright sm:px-3 sm:text-sm"
+        class="min-w-0 flex-1 rounded-lg border border-white/10 bg-black/30 px-2 py-1.5 font-mono text-xs text-white placeholder-white/35 outline-none focus:border-white/25 sm:px-3 sm:text-sm"
         @keydown.enter="handleSave"
       />
       <button
         type="button"
-        class="shrink-0 cursor-pointer rounded-lg bg-glass-light px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-glass-border sm:px-3 sm:text-sm"
+        class="shrink-0 cursor-pointer rounded-lg border border-white/10 bg-white/10 px-2.5 py-1.5 text-xs font-bold text-white transition-colors hover:bg-white/15 sm:px-3 sm:text-sm"
         @click="handleSave"
       >
         OK
@@ -149,14 +154,21 @@ function formatDate(ts: number): string {
     <section v-if="tracks.length > 0" class="flex min-h-0 w-full flex-col gap-1">
       <button
         type="button"
-        class="mx-auto flex w-full max-w-sm cursor-pointer items-center justify-center gap-2 rounded-xl border border-glass-border bg-glass/90 px-3 py-2 text-left backdrop-blur-xl transition-colors hover:border-glass-border-bright hover:bg-glass-light sm:py-2.5"
+        class="mx-auto flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/10 bg-zinc-950/70 px-3 py-2 text-left transition-colors hover:border-white/18 hover:bg-zinc-900/80 sm:py-2.5"
         :aria-expanded="savedListOpen"
         aria-controls="saved-tracks-list"
         @click="savedListOpen = !savedListOpen"
       >
-        <ChevronRight v-if="!savedListOpen" :size="16" class="shrink-0 text-white/45" aria-hidden="true" />
+        <ChevronRight
+          v-if="!savedListOpen"
+          :size="16"
+          class="shrink-0 text-white/45"
+          aria-hidden="true"
+        />
         <ChevronDown v-else :size="16" class="shrink-0 text-white/45" aria-hidden="true" />
-        <span class="min-w-0 flex-1 text-center text-xs font-medium tracking-wide text-white/75 uppercase sm:text-sm">
+        <span
+          class="min-w-0 flex-1 text-center text-xs font-medium tracking-wide text-white/75 uppercase sm:text-sm"
+        >
           Saved tracks
           <span class="text-white/40">({{ tracks.length }})</span>
         </span>
@@ -165,12 +177,12 @@ function formatDate(ts: number): string {
       <ul
         v-show="savedListOpen"
         id="saved-tracks-list"
-        class="track-list-scroll mx-auto flex max-h-[min(42svh,13rem)] w-full max-w-sm list-none flex-col gap-1 overflow-y-auto overscroll-y-contain rounded-xl border border-glass-border/90 bg-glass/50 p-1 touch-pan-y sm:max-h-60 sm:p-1.5"
+        class="track-list-scroll mx-auto flex max-h-[min(42svh,13rem)] w-full list-none flex-col gap-1 overflow-y-auto overscroll-y-contain rounded-xl border border-white/10 bg-black/25 p-1 touch-pan-y ring-1 ring-inset ring-white/4 sm:max-h-60 sm:p-1.5"
         role="list"
       >
         <li v-for="track in tracks" :key="track.id" class="shrink-0">
           <div
-            class="flex items-center gap-1 rounded-lg border border-transparent bg-glass/80 px-2 py-1.5 backdrop-blur-xl sm:gap-2 sm:px-2.5 sm:py-2"
+            class="flex items-center gap-1 rounded-lg border border-white/6 bg-zinc-950/60 px-2 py-1.5 sm:gap-2 sm:px-2.5 sm:py-2"
           >
             <button
               type="button"
@@ -204,4 +216,3 @@ function formatDate(ts: number): string {
   scrollbar-gutter: stable;
 }
 </style>
-

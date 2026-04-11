@@ -18,7 +18,7 @@ export function useAudioEngine(): AudioEngine {
 
   function getSharedReverb(): Tone.Reverb {
     if (!reverb) {
-      reverb = new Tone.Reverb({ decay: 2, wet: 0.16 }).toDestination()
+      reverb = new Tone.Reverb({ decay: 3.8, wet: 0.24, preDelay: 0.02 }).toDestination()
     }
     return reverb
   }
@@ -57,7 +57,8 @@ export function useAudioEngine(): AudioEngine {
         A7: 'A7.mp3',
         C8: 'C8.mp3',
       },
-      release: 1,
+      /** Longer tail after key-up so notes ring out instead of cutting off abruptly. */
+      release: 3.2,
       baseUrl: 'https://tonejs.github.io/audio/salamander/',
     }).connect(getSharedReverb())
   }

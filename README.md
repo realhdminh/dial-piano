@@ -22,7 +22,7 @@ A **Vue 3** web app that turns a phone-style **dial pad** into a **polyphonic ac
 - **Salamander piano** — `Tone.Sampler` with interpolated samples from Tone’s CDN (requires network on first play).
 - **Dial UI** — Compact pad with optional extended row; note trails and glass-style visuals (**Tailwind CSS v4**).
 - **Record & playback** — Capture note on/off timing; play back through the same engine.
-- **Saved tracks** — Persisted in the browser with **Dexie** / IndexedDB (with optional one-time migration from legacy `localStorage`).
+- **Saved tracks** — Persisted in the browser with **Dexie** / IndexedDB.
 - **Static-first** — No backend required; suitable for **Cloudflare Pages** or any static host.
 
 ---
