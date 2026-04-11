@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@theme {
+  --color-glass: oklch(100% 0 0 / 0.06);
+  --color-glass-light: oklch(100% 0 0 / 0.1);
+  --color-glass-border: oklch(100% 0 0 / 0.12);
+  --color-glass-border-bright: oklch(100% 0 0 / 0.2);
+  --color-surface: oklch(15% 0.02 260);
+  --color-surface-light: oklch(20% 0.02 260);
+
+  --color-neon-blue: oklch(75% 0.18 220);
+  --color-neon-pink: oklch(65% 0.28 350);
+  --color-neon-green: oklch(80% 0.3 140);
+
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --animate-glow-pulse: glow-pulse 0.6s ease-out;
+  --animate-note-fly: note-fly 0.6s ease-out forwards;
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-fade-out: fade-out 0.3s ease-out forwards;
+  --animate-ripple: ripple 0.5s ease-out;
+
+  @keyframes glow-pulse {
+    0% {
+      box-shadow: 0 0 8px var(--glow-color, var(--color-neon-blue));
+    }
+    50% {
+      box-shadow: 0 0 24px var(--glow-color, var(--color-neon-blue)),
+        0 0 48px color-mix(in oklch, var(--glow-color, var(--color-neon-blue)), transparent 60%);
+    }
+    100% {
+      box-shadow: 0 0 4px color-mix(in oklch, var(--glow-color, var(--color-neon-blue)), transparent 70%);
+    }
+  }
+
+  @keyframes note-fly {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-60px) scale(0.7);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes ripple {
+    0% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+}
+
+html,
+body {
+  min-height: 100dvh;
+}
+
+body {
+  background: linear-gradient(145deg, oklch(12% 0.03 270), oklch(8% 0.02 250), oklch(5% 0.01 230));
+  color: oklch(90% 0 0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  min-height: 100dvh;
+}
