@@ -11,6 +11,7 @@ This file is the **single project contract** for AI assistants (Claude, Cursor, 
 - **Global providers:** `audioEngineKey` + `recorderKey` from `App.vue` (`provide` / `inject` in children).
 - **Persistence:** `src/db/dialPianoDb.ts` — singleton Dexie DB; `src/composables/useTracks.ts` — `liveQuery` + unsubscribe on `onUnmounted`.
 - **Styling:** Tailwind **v4** via `@import "tailwindcss"` and **`@theme { }`** in `src/main.css` (no `tailwind.config.js` as source of truth for theme tokens).
+- **Package manager:** Use **Bun** locally (`bun install`, `bun run …`, `bun.lock`). GitHub Actions may use another tool (see `.github/workflows/`); do not replace repo docs with npm-only instructions for local dev.
 
 **When changing behavior:** Prefer the smallest diff that matches existing patterns; do not refactor unrelated modules.
 
@@ -62,8 +63,9 @@ This file is the **single project contract** for AI assistants (Claude, Cursor, 
 
 ## 6. TypeScript, quality, and commands
 
-- Typecheck with **`vue-tsc`** (`npm run type-check` / part of `npm run build`).
-- Follow existing **ESLint / Oxlint** conventions; run `npm run lint` before large merges when possible.
+- **Local:** use **Bun** — `bun run type-check`, `bun run build`, `bun run lint`, etc. (`bun run build` runs `vue-tsc` + Vite).
+- **CI:** follow whatever the workflow in `.github/workflows/` invokes (may differ from Bun on purpose).
+- Follow existing **ESLint / Oxlint** conventions; run `bun run lint` before large merges when possible.
 - **`src/instruments.ts`** currently exports **`PIANO_ACCENT`** only — UI accent for the piano-only build; do not resurrect multi-instrument types there unless the user asks.
 
 ---

@@ -1,0 +1,74 @@
+# Deploy static build to Cloudflare Pages on every push to `main`.
+#
+# Local development in this repo uses Bun (see README / CLAUDE.md). This workflow
+# intentionally uses npm + package-lock.json on GitHub-hosted runners for a
+# reproducible install without requiring Bun on Actions.
+#
+# Required repository secrets (names must match exactly):
+#   CLOUDFLARE_API_TOKEN — Create at: Dashboard → Manage Account → API Tokens.
+#     Recommended template: "Edit Cloudflare Workers" or custom with:
+#     Account → Cloudflare Pages → Edit (and read Account settings if prompted).
+#   CLOUDFLARE_ACCOUNT_ID — Dashboard → any domain → Overview → Account ID (right column).
+#
+# Stack: Node 24 (matches @tsconfig/node24 / @types/node in repo). `actions/setup-node@v4`
+# resolves `24` from Node’s release index (same as local `node-version: '24'`).
+
+name: Deploy Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: cloudflare-pages-main
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify Cloudflare secrets are configured
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "::error::Repository secret CLOUDFLARE_API_TOKEN is missing or empty."
+            exit 1
+          fi
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "::error::Repository secret CLOUDFLARE_ACCOUNT_ID is missing or empty."
+            exit 1
+          fi
+          echo "Cloudflare secrets present."
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          set -euo pipefail
+          test -f dist/index.html || { echo "::error::dist/index.html missing after build"; exit 1; }
+          echo "dist/ OK ($(find dist -type f | wc -l) files)"
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run deploy

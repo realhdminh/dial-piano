@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/Dexie-4-524292?style=for-the-badge&logo=dexie&logoColor=white" alt="Dexie 4" />
   <img src="https://img.shields.io/badge/Lucide-Vue-161616?style=for-the-badge&logo=lucide&logoColor=white" alt="Lucide Vue" />
   <img src="https://img.shields.io/badge/Cloudflare_Pages-ready-F38020?style=for-the-badge&logo=cloudflarepages&logoColor=white" alt="Cloudflare Pages" />
-  <img src="https://img.shields.io/badge/Node.js-20%20%7C%2022-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js 20 or 22" />
+  <img src="https://img.shields.io/badge/Bun-package_manager-000000?style=for-the-badge&logo=bun&logoColor=white" alt="Bun" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License MIT" /></a>
 </p>
 
@@ -37,22 +37,22 @@ A **Vue 3** web app that turns a phone-style **dial pad** into a **polyphonic ac
 | Audio | Tone.js (`Tone.start`, `Tone.loaded`, `Sampler`) |
 | Storage | Dexie 4 + `liveQuery` for reactive track lists |
 | Icons | Lucide Vue |
+| Package manager | **Bun** (`bun.lock`; use `bun install` / `bun run …`) |
 
 ---
 
 ## Requirements
 
-- **Node.js** `^20.19.0` or `>=22.12.0` (see `package.json` → `engines`)
-
-Use **npm**, **pnpm**, or **bun** — lockfiles may differ; CI should pin one package manager.
+- **[Bun](https://bun.sh/)** (latest stable) for installs and scripts in this repo.
+- **Node.js** `^20.19.0` or `>=22.12.0` when a tool needs a Node runtime (see `package.json` → `engines`); Bun satisfies most workflows on its own.
 
 ---
 
 ## Getting started
 
 ```bash
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 Open the URL Vite prints (usually `http://localhost:5173`). **Tap “Start audio”** (or equivalent) so the browser unlocks the AudioContext before playing.
@@ -61,13 +61,13 @@ Open the URL Vite prints (usually `http://localhost:5173`). **Tap “Start audio
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Dev server with HMR |
-| `npm run build` | `vue-tsc` + production bundle to `dist/` |
-| `npm run preview` | Serve `dist/` locally |
-| `npm run type-check` | Typecheck only |
-| `npm run lint` | ESLint + Oxlint |
-| `npm run format` | Format `src/` with Oxfmt |
-| `npm run deploy` | `wrangler pages deploy dist` (see [Deploy](#deploy)) |
+| `bun run dev` | Dev server with HMR |
+| `bun run build` | `vue-tsc` + production bundle to `dist/` |
+| `bun run preview` | Serve `dist/` locally |
+| `bun run type-check` | Typecheck only |
+| `bun run lint` | ESLint + Oxlint |
+| `bun run format` | Format `src/` with Oxfmt |
+| `bun run deploy` | `wrangler pages deploy dist` (see [Deploy](#deploy)) |
 
 ---
 
@@ -89,21 +89,25 @@ public/
 
 ## Deploy
 
+### GitHub Actions
+
+Pushes to **`main`** run [`.github/workflows/deploy-cloudflare-pages.yml`](.github/workflows/deploy-cloudflare-pages.yml). That job uses **npm** on the runner (`npm ci` + `package-lock.json`) so the workflow stays self-contained; your day-to-day dev stays on **Bun** above.
+
 ### Cloudflare Pages (Git)
 
 1. Connect the repository in the Cloudflare dashboard.
-2. **Build command:** `npm run build`  
+2. **Build command:** `bun run build` (or `npm run build` if you prefer npm on Pages).
 3. **Output directory:** `dist`  
-4. **Environment:** set `NODE_VERSION` to `22` or `20` to match `engines`.
+4. **Environment:** install Bun or pin Node per your build command (see `package.json` → `engines` if using Node).
 5. `public/_redirects` is copied into `dist` so client routes resolve to `index.html` where needed.
 
-### Wrangler CLI
+### Wrangler CLI (local)
 
 Copy `.env.example` → `.env` and fill **Cloudflare API token** and **account ID** if you use:
 
 ```bash
-npm run build
-npm run deploy
+bun run build
+bun run deploy
 ```
 
 Never commit real `.env` values.
