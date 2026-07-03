@@ -1,6 +1,7 @@
 import { ref, onUnmounted } from 'vue'
 import { liveQuery } from 'dexie'
 import type { RecordedEvent } from '@/composables/useRecorder'
+import { DEFAULT_INSTRUMENT, type InstrumentId } from '@/instruments'
 import { db, addTrack, removeTrack, type Track } from '@/db/dialPianoDb'
 
 export type { Track } from '@/db/dialPianoDb'
@@ -23,13 +24,18 @@ export function useTracks() {
     subscription.unsubscribe()
   })
 
-  async function saveTrack(name: string, events: readonly RecordedEvent[]): Promise<void> {
+  async function saveTrack(
+    name: string,
+    events: readonly RecordedEvent[],
+    instrumentId: InstrumentId = DEFAULT_INSTRUMENT,
+  ): Promise<void> {
     const trimmed = name.trim()
     const count = await db.tracks.count()
     const resolvedName = trimmed || `Track ${count + 1}`
     await addTrack({
       name: resolvedName,
       createdAt: Date.now(),
+      instrumentId,
       events: [...events],
     })
   }

@@ -1,11 +1,13 @@
 import Dexie, { type EntityTable } from 'dexie'
 import type { RecordedEvent } from '@/composables/useRecorder'
+import { DEFAULT_INSTRUMENT, type InstrumentId } from '@/instruments'
 
 /** Persisted recording row (IndexedDB). */
 export interface Track {
   id: string
   name: string
   createdAt: number
+  instrumentId: InstrumentId
   events: RecordedEvent[]
 }
 
@@ -26,6 +28,20 @@ class DialPianoDB extends Dexie {
     this.version(1).stores({
       tracks: 'id, createdAt',
     })
+    this.version(2)
+      .stores({
+        tracks: 'id, createdAt, instrumentId',
+      })
+      .upgrade(async (tx) => {
+        await tx
+          .table('tracks')
+          .toCollection()
+          .modify((track: Track & { instrumentId?: InstrumentId }) => {
+            if (!track.instrumentId) {
+              track.instrumentId = DEFAULT_INSTRUMENT
+            }
+          })
+      })
   }
 }
 
@@ -38,6 +54,7 @@ export async function addTrack(row: Omit<Track, 'id'> & { id?: string }): Promis
     id,
     name: row.name,
     createdAt: row.createdAt,
+    instrumentId: row.instrumentId,
     events: cloneEventsForIdb(row.events),
   })
   return id

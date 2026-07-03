@@ -1,4 +1,5 @@
 import { shallowRef, readonly, type InjectionKey, type DeepReadonly, type Ref } from 'vue'
+import type { InstrumentId } from '@/instruments'
 
 export interface RecordedEvent {
   note: string
@@ -10,7 +11,8 @@ export interface Recorder {
   isRecording: DeepReadonly<Ref<boolean>>
   isPlaying: DeepReadonly<Ref<boolean>>
   events: DeepReadonly<Ref<RecordedEvent[]>>
-  startRecording: () => void
+  recordingInstrument: DeepReadonly<Ref<InstrumentId | null>>
+  startRecording: (instrumentId: InstrumentId) => void
   stopRecording: () => void
   recordAttack: (note: string) => void
   recordRelease: (note: string) => void
@@ -28,12 +30,14 @@ export function useRecorder(): Recorder {
   const isRecording = shallowRef(false)
   const isPlaying = shallowRef(false)
   const events = shallowRef<RecordedEvent[]>([])
+  const recordingInstrument = shallowRef<InstrumentId | null>(null)
 
   let startTime = 0
   let timeoutIds: ReturnType<typeof setTimeout>[] = []
 
-  function startRecording() {
+  function startRecording(instrumentId: InstrumentId) {
     events.value = []
+    recordingInstrument.value = instrumentId
     startTime = performance.now()
     isRecording.value = true
   }
@@ -90,6 +94,7 @@ export function useRecorder(): Recorder {
     isRecording: readonly(isRecording),
     isPlaying: readonly(isPlaying),
     events: readonly(events),
+    recordingInstrument: readonly(recordingInstrument),
     startRecording,
     stopRecording,
     recordAttack,

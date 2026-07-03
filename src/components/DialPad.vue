@@ -7,6 +7,7 @@ import { recorderKey, type Recorder } from '@/composables/useRecorder'
 const props = defineProps<{
   extended: boolean
   accentColor: string
+  instrumentReady?: boolean
 }>()
 
 const audio = inject(audioEngineKey) as AudioEngine
@@ -53,11 +54,13 @@ const keys = computed<KeyDef[]>(() => {
 })
 
 function handleAttack(note: string) {
+  if (props.instrumentReady === false) return
   audio.attack(note)
   recorder.recordAttack(note)
 }
 
 function handleRelease(note: string) {
+  if (props.instrumentReady === false) return
   audio.release(note)
   recorder.recordRelease(note)
 }

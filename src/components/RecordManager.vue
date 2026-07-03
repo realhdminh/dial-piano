@@ -3,6 +3,7 @@ import { shallowRef, inject, computed, watch } from 'vue'
 import { Circle, Square, Play, Save, Trash2, X, ChevronDown, ChevronRight } from '@lucide/vue'
 import { audioEngineKey, type AudioEngine } from '@/composables/useAudioEngine'
 import { recorderKey, type Recorder } from '@/composables/useRecorder'
+import { INSTRUMENTS } from '@/instruments'
 import { useTracks } from '@/composables/useTracks'
 
 defineProps<{ accentColor: string }>()
@@ -31,7 +32,7 @@ function handleRecord() {
     recorder.stopRecording()
   } else {
     recorder.stop()
-    recorder.startRecording()
+    recorder.startRecording(audio.instrument.value)
   }
 }
 
@@ -45,11 +46,12 @@ function handlePlay() {
   }
 }
 
-function handlePlayTrack(trackId: string) {
+async function handlePlayTrack(trackId: string) {
   if (recorder.isRecording.value) return
   const track = getTrack(trackId)
   if (!track) return
   recorder.stop()
+  await audio.setInstrument(track.instrumentId)
   recorder.play(track.events, audio.attack, audio.release)
 }
 
@@ -59,9 +61,14 @@ function openSaveDialog() {
 }
 
 async function handleSave() {
-  await saveTrack(trackName.value.trim(), recorder.events.value)
+  const instrumentId = recorder.recordingInstrument.value ?? audio.instrument.value
+  await saveTrack(trackName.value.trim(), recorder.events.value, instrumentId)
   showSaveDialog.value = false
   savedListOpen.value = true
+}
+
+function instrumentLabel(id: string): string {
+  return INSTRUMENTS[id as keyof typeof INSTRUMENTS]?.shortLabel ?? id
 }
 
 function formatDate(ts: number): string {
@@ -191,6 +198,11 @@ function formatDate(ts: number): string {
             >
               <Play :size="12" class="shrink-0 text-white/45 sm:h-3.5 sm:w-3.5" />
               <span class="truncate text-xs text-white/85 sm:text-sm">{{ track.name }}</span>
+              <span
+                class="shrink-0 rounded px-1 py-0.5 font-mono text-[9px] tracking-wide text-white/35 uppercase sm:text-[10px]"
+              >
+                {{ instrumentLabel(track.instrumentId) }}
+              </span>
               <span class="ml-auto shrink-0 text-[9px] tabular-nums text-white/30 sm:text-[10px]">{{
                 formatDate(track.createdAt)
               }}</span>
