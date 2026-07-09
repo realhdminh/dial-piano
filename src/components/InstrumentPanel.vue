@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, type Component } from 'vue'
+import { Piano, Guitar, Music2, Wind } from '@lucide/vue'
 import { INSTRUMENT_LIST, type InstrumentId } from '@/instruments'
 
 const props = defineProps<{
@@ -10,6 +11,20 @@ const props = defineProps<{
 defineEmits<{
   'update:instrument': [value: InstrumentId]
 }>()
+
+const MOBILE_LABEL: Record<InstrumentId, string> = {
+  piano: 'Pia',
+  kalimba: 'Kal',
+  guitar: 'Gui',
+  flute: 'Flu',
+}
+
+const INSTRUMENT_ICONS: Record<InstrumentId, Component> = {
+  piano: Piano,
+  kalimba: Music2,
+  guitar: Guitar,
+  flute: Wind,
+}
 
 const count = INSTRUMENT_LIST.length
 
@@ -27,26 +42,27 @@ const thumbStyle = computed(() => ({
 
 <template>
   <div
-    class="relative isolate flex h-9 w-full rounded-lg border border-white/10 bg-black/55 p-px ring-1 ring-inset ring-white/5"
+    class="relative isolate flex h-10 w-full rounded-xl bg-white/6 p-px"
     role="group"
     aria-label="Instrument"
   >
     <span
       aria-hidden="true"
-      class="pointer-events-none absolute bottom-px left-px top-px z-0 rounded-md opacity-95 shadow-[0_1px_8px_rgba(0,0,0,0.35)] transition-transform duration-200 ease-[cubic-bezier(0.33,1,0.68,1)]"
+      class="pointer-events-none absolute bottom-px left-px top-px z-0 rounded-[0.65rem] shadow-[0_2px_12px_rgba(0,0,0,0.45)] transition-transform duration-200 ease-[cubic-bezier(0.33,1,0.68,1)]"
       :style="thumbStyle"
     />
     <button
       v-for="item in INSTRUMENT_LIST"
       :key="item.id"
       type="button"
-      class="relative z-10 min-w-0 flex-1 rounded-md px-1 py-1.5 text-center text-[10px] font-bold tracking-tight transition-colors duration-150 sm:px-2 sm:text-[11px]"
-      :class="instrument === item.id ? 'text-zinc-950' : 'text-white/45 hover:text-white/70'"
+      class="relative z-10 flex min-w-0 flex-1 items-center justify-center gap-1 rounded-[0.65rem] py-2 text-[11px] font-bold tracking-tight transition-colors duration-150"
+      :class="instrument === item.id ? 'text-zinc-950' : 'text-white/50 active:text-white/80'"
       :aria-pressed="instrument === item.id"
       :aria-label="item.label"
       @click="$emit('update:instrument', item.id)"
     >
-      {{ item.shortLabel }}
+      <component :is="INSTRUMENT_ICONS[item.id]" :size="13" class="shrink-0" aria-hidden="true" />
+      <span>{{ MOBILE_LABEL[item.id] }}</span>
     </button>
   </div>
 </template>

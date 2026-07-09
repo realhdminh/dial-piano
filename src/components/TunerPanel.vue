@@ -40,23 +40,16 @@ async function toggleListen() {
 </script>
 
 <template>
-  <section
-    class="w-full rounded-2xl border border-white/10 bg-zinc-950/65 p-4 ring-1 ring-inset ring-white/4 backdrop-blur-2xl sm:rounded-[1.25rem] sm:p-5"
-  >
-    <div class="mb-4 flex items-start justify-between gap-3">
+  <div class="flex flex-col gap-4">
+    <div class="flex items-start justify-between gap-3">
       <div>
-        <h2
-          class="font-mono text-[10px] font-medium tracking-[0.22em] text-white/40 uppercase sm:text-xs"
-        >
-          Live tuner
-        </h2>
-        <p class="mt-1 text-xs text-white/45 sm:text-sm">
+        <p class="mt-1 text-sm text-white/50">
           Mic listens to your real {{ instrumentLabel.toLowerCase() }} — pluck a tine or string.
         </p>
       </div>
       <button
         type="button"
-        class="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold transition-colors duration-150 sm:text-sm"
+        class="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold transition-colors duration-150"
         :class="
           tuner.isListening.value
             ? 'border-red-400/30 bg-red-950/40 text-red-300'
@@ -71,26 +64,23 @@ async function toggleListen() {
       </button>
     </div>
 
-    <p v-if="tuner.error.value" class="mb-3 text-center text-xs text-red-400/90">
+    <p v-if="tuner.error.value" class="text-center text-xs text-red-400/90">
       {{ tuner.error.value }}
     </p>
 
     <div
-      class="flex min-h-28 flex-col items-center justify-center rounded-xl border border-white/8 bg-black/30 px-4 py-6 text-center"
+      class="flex min-h-36 flex-col items-center justify-center rounded-2xl border border-white/8 bg-black/30 px-4 py-7 text-center"
       aria-live="polite"
       aria-atomic="true"
     >
       <template v-if="tuner.reading.value">
-        <p
-          class="text-4xl font-black tabular-nums tracking-tight sm:text-5xl"
-          :style="{ color: accentColor }"
-        >
+        <p class="text-5xl font-black tabular-nums tracking-tight" :style="{ color: accentColor }">
           {{ tuner.reading.value.note }}
         </p>
         <p class="mt-2 font-mono text-sm font-medium tabular-nums" :class="centsColor">
           {{ centsLabel }}
         </p>
-        <p class="mt-1 font-mono text-[10px] tabular-nums text-white/35 sm:text-xs">
+        <p class="mt-1 font-mono text-[10px] tabular-nums text-white/35">
           {{ tuner.reading.value.frequency.toFixed(1) }} Hz
         </p>
       </template>
@@ -104,9 +94,9 @@ async function toggleListen() {
       </template>
     </div>
 
-    <p class="mt-3 text-center font-mono text-[10px] leading-snug text-white/32 sm:text-xs">
+    <p class="text-center font-mono text-[10px] leading-snug text-white/32">
       Pitch detection from the microphone — quiet room works best. Within ±5¢ is effectively in
       tune.
     </p>
-  </section>
+  </div>
 </template>

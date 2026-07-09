@@ -19,7 +19,8 @@ let trailCounter = 0
 
 const activePointers = new Set<number>()
 
-const glowStyle = computed(() => ({
+const keyStyle = computed(() => ({
+  '--key-accent': props.accentColor,
   '--glow-color': props.accentColor,
 }))
 
@@ -61,33 +62,26 @@ function onPointerCancel(e: PointerEvent) {
 
 <template>
   <button
-    class="dial-key group relative flex w-full min-h-[44px] min-w-0 cursor-pointer select-none items-stretch overflow-hidden rounded-xl border border-white/9 bg-zinc-950/85 text-left transition-[border-color,background-color,box-shadow] duration-150 sm:min-h-0"
-    :class="[
-      isPressed
-        ? 'border-white/20 bg-zinc-900/95 animate-glow-pulse'
-        : 'hover:border-white/16 hover:bg-zinc-900/70',
-    ]"
-    :style="glowStyle"
+    class="dial-key relative flex min-h-0 min-w-0 cursor-pointer select-none items-center justify-center overflow-hidden bg-zinc-950 text-center transition-[background-color,box-shadow] duration-100"
+    :class="isPressed && 'dial-key--pressed animate-glow-pulse'"
+    :style="keyStyle"
     @pointerdown.prevent="onPointerDown"
     @pointerup="onPointerUp"
     @pointercancel="onPointerCancel"
     @contextmenu.prevent
   >
-    <div
-      class="relative z-1 flex w-full flex-1 items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-2.5"
+    <span
+      class="absolute right-1.5 top-1 font-mono text-[8px] font-medium tabular-nums tracking-wide text-white/25"
     >
-      <span
-        class="text-xl font-black tracking-tighter tabular-nums transition-colors duration-150 sm:text-2xl md:text-[1.7rem]"
-        :style="{ color: isPressed ? accentColor : 'oklch(96% 0.01 270)' }"
-      >
-        {{ label }}
-      </span>
-      <span
-        class="shrink-0 font-mono text-[9px] font-medium tabular-nums tracking-wide text-white/32 sm:text-[10px]"
-      >
-        {{ note }}
-      </span>
-    </div>
+      {{ note }}
+    </span>
+
+    <span
+      class="dial-key-label font-black tabular-nums leading-none tracking-tighter transition-colors duration-100"
+      :class="isPressed ? 'text-[var(--key-accent)]' : 'text-white/92'"
+    >
+      {{ label }}
+    </span>
 
     <NoteTrail
       v-for="trailId in activeTrails"
@@ -104,6 +98,14 @@ function onPointerCancel(e: PointerEvent) {
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
-  aspect-ratio: 8 / 5;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dial-key-label {
+  font-size: clamp(1.75rem, 9vw, 2.75rem);
+}
+
+.dial-key--pressed {
+  background: color-mix(in oklch, var(--key-accent), oklch(12% 0.02 270) 82%);
 }
 </style>

@@ -33,7 +33,6 @@ const STANDARD_KEYS: KeyDef[] = [
   { label: '#', note: 'G5' },
 ]
 
-/** Three white keys immediately below C4 (no sharps/flats). */
 const EXTENDED_TOP: KeyDef[] = [
   { label: 'G', note: 'G3' },
   { label: 'A', note: 'A3' },
@@ -68,7 +67,7 @@ function handleRelease(note: string) {
 
 <template>
   <div
-    class="grid w-full auto-rows-fr gap-2 sm:gap-2.5 md:gap-3"
+    class="dial-grid grid h-full w-full auto-rows-fr gap-px bg-white/8"
     :class="extended ? 'grid-cols-3 grid-rows-6' : 'grid-cols-3 grid-rows-4'"
   >
     <DialKey

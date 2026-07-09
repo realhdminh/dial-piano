@@ -81,7 +81,9 @@
 
 html,
 body {
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
@@ -100,5 +102,6 @@ body {
 }
 
 #app {
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
 }
