@@ -41,7 +41,9 @@ async function handleReady() {
 <template>
   <AudioInitOverlay v-if="showOverlay" :accent-color="accentColor" @ready="handleReady" />
 
-  <div class="app-shell flex h-[100dvh] flex-col overflow-hidden">
+  <div
+    class="app-shell mx-auto flex h-dvh w-full max-w-md flex-col overflow-hidden sm:border-x sm:border-white/8 sm:shadow-2xl"
+  >
     <header class="shrink-0 border-b border-white/6 bg-black/30">
       <div class="px-1.5 pt-[max(0.5rem,env(safe-area-inset-top))]">
         <InstrumentPanel v-model:instrument="instrument" :accent-color="accentColor" />

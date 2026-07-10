@@ -65,6 +65,7 @@ function onPointerCancel(e: PointerEvent) {
     class="dial-key relative flex min-h-0 min-w-0 cursor-pointer select-none items-center justify-center overflow-hidden bg-zinc-950 text-center transition-[background-color,box-shadow] duration-100"
     :class="isPressed && 'dial-key--pressed animate-glow-pulse'"
     :style="keyStyle"
+    :aria-label="note"
     @pointerdown.prevent="onPointerDown"
     @pointerup="onPointerUp"
     @pointercancel="onPointerCancel"

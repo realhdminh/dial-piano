@@ -9,7 +9,11 @@ const props = defineProps<{
 const emit = defineEmits<{ done: [] }>()
 
 onMounted(() => {
-  setTimeout(() => emit('done'), 600)
+  const duration = Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue('--animate-note-fly-duration') ||
+      '0.6',
+  )
+  setTimeout(() => emit('done'), duration * 1000)
 })
 </script>
 

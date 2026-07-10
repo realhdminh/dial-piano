@@ -13,17 +13,17 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License MIT" /></a>
 </p>
 
-A **Vue 3** web app that turns a phone-style **dial pad** into a **polyphonic acoustic piano**. Each key maps to a pitch; you can extend the layout, record performances, and save tracks locally with **IndexedDB** (via Dexie). Audio uses **Tone.js** with the Salamander multi-sample piano.
+A **Vue 3** web app that turns a phone-style **dial pad** into a **polyphonic sampler keyboard**. Each key maps to a pitch; you can extend the layout, record performances, and save tracks locally with **IndexedDB** (via Dexie). Audio uses **Tone.js** with multi-sample instruments (Salamander piano, kalimba, guitar, flute).
 
 ---
 
 ## Features
 
-- **Salamander piano** — `Tone.Sampler` with interpolated samples from Tone’s CDN (requires network on first play).
+- **Salamander piano + more** — `Tone.Sampler` with interpolated samples from Tone’s CDN for piano, plus kalimba, guitar, and flute instruments (network required on first play per instrument).
 - **Dial UI** — Compact pad with optional extended row; note trails and glass-style visuals (**Tailwind CSS v4**).
 - **Record & playback** — Capture note on/off timing; play back through the same engine.
 - **Saved tracks** — Persisted in the browser with **Dexie** / IndexedDB.
-- **Static-first** — No backend required; suitable for **Cloudflare Pages** or any static host.
+- **Static-first with edge proxy** — No app server; suitable for **Cloudflare Pages**. A Cloudflare Pages Function proxies the kalimba samples same-origin (see [Audio notes](#audio-notes)).
 
 ---
 
@@ -80,7 +80,10 @@ src/
   components/             # DialPad, DialKey, ControlPanel, RecordManager, …
   composables/            # useAudioEngine, useRecorder, useTracks
   db/                     # Dexie singleton + migrations
-  instruments.ts          # Shared UI accent (piano-only build)
+  instruments.ts          # Instrument registry (piano, kalimba, guitar, flute)
+functions/
+  audio/kalimba/[[path]].ts  # Cloudflare Pages Function: same-origin kalimba proxy
+vite-plugin-kalimba-proxy.ts # Dev-only mirror of the kalimba proxy (Vite middleware)
 public/
   _redirects              # SPA-style rewrite for static hosts (e.g. Cloudflare Pages)
 ```
@@ -116,7 +119,8 @@ Never commit real `.env` values.
 
 ## Audio notes
 
-- Samples load from `https://tonejs.github.io/audio/salamander/` — allow that origin if you use a strict CSP.
+- Piano samples load from `https://tonejs.github.io/audio/salamander/` — allow that origin if you use a strict CSP.
+- **Kalimba** tines are fetched from `middleearmedia.com`, but always same-origin via `/audio/kalimba/` so the upstream is never exposed to the browser and no `Referer` leaks. In production this route is served by the Cloudflare Pages Function `functions/audio/kalimba/[[path]].ts`; in `bun run dev` the equivalent logic runs as a Vite middleware (`vite-plugin-kalimba-proxy.ts`). Both enforce the same filename allowlist and 1-year cache.
 - **User gesture** is required before audio (`Tone.start()`); the app uses an explicit init overlay for that.
 
 ---

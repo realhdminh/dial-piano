@@ -6,11 +6,13 @@ This file is the **single project contract** for AI assistants (Claude, Cursor, 
 
 ## 1. Product & architecture (read first)
 
-- **What it is:** Browser-only SPA: dial-pad UI → **one acoustic piano** (`Tone.Sampler`, Salamander URLs). Record/playback + **Dexie/IndexedDB** for saved tracks.
+- **What it is:** Browser-only SPA: dial-pad UI → **multi-sample synth keyboard** (`Tone.Sampler`, instruments: piano/kalimba/guitar/flute). Record/playback + **Dexie/IndexedDB** for saved tracks.
 - **Entry:** `src/main.ts` mounts `App.vue` only (no Vue Router wired in `main.ts` today; a `src/router/` stub may exist — do not assume routes are active).
 - **Global providers:** `audioEngineKey` + `recorderKey` from `App.vue` (`provide` / `inject` in children).
 - **Persistence:** `src/db/dialPianoDb.ts` — singleton Dexie DB; `src/composables/useTracks.ts` — `liveQuery` + unsubscribe on `onUnmounted`.
 - **Styling:** Tailwind **v4** via `@import "tailwindcss"` and **`@theme { }`** in `src/main.css` (no `tailwind.config.js` as source of truth for theme tokens).
+- **Edge proxy (kalimba samples):** Sampled kalimba tines are fetched same-origin from `/audio/kalimba/`. In production this is the Cloudflare Pages Function `functions/audio/kalimba/[[path]].ts` (proxies `middleearmedia.com`, no Referer, 1-year cache). In dev the equivalent `vite-plugin-kalimba-proxy.ts` mirrors that logic as a Vite middleware. Keep both in sync if the upstream or filename rules change.
+- **Functions typing:** `functions/**` is type-checked by `tsconfig.functions.json` (referenced from the root `tsconfig.json`), using `@cloudflare/workers-types`. Import `PagesFunction` explicitly; do not rely on globals. `vue-tsc --build` covers this project.
 - **Package manager:** Use **Bun** locally and in CI (`bun install`, `bun run …`, `bun.lock`; see `.github/workflows/deploy-cloudflare-pages.yml`).
 
 **When changing behavior:** Prefer the smallest diff that matches existing patterns; do not refactor unrelated modules.
@@ -65,7 +67,7 @@ This file is the **single project contract** for AI assistants (Claude, Cursor, 
 
 - Use **Bun** for scripts — `bun run type-check`, `bun run build`, `bun run lint`, etc. (`bun run build` runs `vue-tsc` + Vite). CI uses the same commands in `.github/workflows/deploy-cloudflare-pages.yml`.
 - Follow existing **ESLint / Oxlint** conventions; run `bun run lint` before large merges when possible.
-- **`src/instruments.ts`** currently exports **`PIANO_ACCENT`** only — UI accent for the piano-only build; do not resurrect multi-instrument types there unless the user asks.
+- **`src/instruments.ts`** exports the `INSTRUMENTS` registry (piano, kalimba, guitar, flute), `INSTRUMENT_LIST`, `InstrumentId`, and `SamplerAudioConfig` (sample URLs + UI accent per instrument). The piano uses the Salamander CDN; kalimba samples are served same-origin via `/audio/kalimba/` (see below). Do not resurrect a single-instrument `PIANO_ACCENT` type unless the user asks.
 
 ---
 

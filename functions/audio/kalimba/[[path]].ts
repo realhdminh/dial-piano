@@ -1,4 +1,5 @@
 /** Edge proxy: same-origin kalimba samples, no Referer to upstream, no static storage. */
+import type { PagesFunction } from '@cloudflare/workers-types'
 
 const UPSTREAM_BASE = 'https://middleearmedia.com/kalimba/assets/sounds/kalimba/'
 

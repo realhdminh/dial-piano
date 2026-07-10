@@ -16,6 +16,7 @@
 
   --animate-glow-pulse: glow-pulse 0.6s ease-out;
   --animate-note-fly: note-fly 0.6s ease-out forwards;
+  --animate-note-fly-duration: 0.6s;
   --animate-fade-in: fade-in 0.3s ease-out;
   --animate-fade-out: fade-out 0.3s ease-out forwards;
   --animate-ripple: ripple 0.5s ease-out;
@@ -104,4 +105,15 @@ body {
 #app {
   height: 100dvh;
   overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
