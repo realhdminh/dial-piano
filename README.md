@@ -20,9 +20,9 @@ A **Vue 3** web app that turns a phone-style **dial pad** into a **polyphonic sa
 ## Features
 
 - **Salamander piano + more** — `Tone.Sampler` with interpolated samples from Tone’s CDN for piano, plus kalimba, guitar, and flute instruments (network required on first play per instrument).
-- **Dial UI** — Compact pad with optional extended row; note trails and glass-style visuals (**Tailwind CSS v4**).
-- **Record & playback** — Capture note on/off timing; play back through the same engine.
-- **Saved tracks** — Persisted in the browser with **Dexie** / IndexedDB.
+- **Dial UI** — Compact pad with optional extended row; note trails and glass-style visuals (**Tailwind CSS v4**). Computer keyboard: digits / `*` `#` (and letter keys in 18-key mode).
+- **Record & playback** — Capture note on/off timing; play back on **Tone.Transport** with optional loop.
+- **Saved tracks** — Persisted in the browser with **Dexie** / IndexedDB; JSON export/import.
 - **Static-first with edge proxy** — No app server; suitable for **Cloudflare Pages**. A Cloudflare Pages Function proxies the kalimba samples same-origin (see [Audio notes](#audio-notes)).
 
 ---
@@ -127,7 +127,7 @@ Never commit real `.env` values.
 
 ## Agent skills (local)
 
-Optional Cursor/agent guidance lives under **`.agents/skills/`** (Vue, Tailwind v4, Tone.js, Dexie). Project-wide agent rules for this repo are summarized in **`CLAUDE.md`**.
+Optional Cursor/agent guidance lives under **`.agents/skills/`** (Vue, Tailwind v4, Tone.js, Dexie). Project-wide agent rules: **`AGENTS.md`** (`CLAUDE.md` redirects there).
 
 ---
 

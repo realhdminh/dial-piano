@@ -10,8 +10,9 @@ import {
 export interface AudioEngine {
   isReady: DeepReadonly<Ref<boolean>>
   instrument: DeepReadonly<Ref<InstrumentId>>
-  attack: (note: string) => void
-  release: (note: string) => void
+  attack: (note: string, time?: number) => void
+  release: (note: string, time?: number) => void
+  releaseAll: (time?: number) => void
   init: () => Promise<void>
   setInstrument: (id: InstrumentId) => Promise<void>
 }
@@ -74,12 +75,20 @@ export function useAudioEngine(): AudioEngine {
     await loadInstrument(id)
   }
 
-  function attack(note: string) {
-    sampler?.triggerAttack(note, Tone.now())
+  function attack(note: string, time?: number) {
+    sampler?.triggerAttack(note, time ?? Tone.now())
   }
 
-  function release(note: string) {
-    sampler?.triggerRelease(note, Tone.now())
+  function release(note: string, time?: number) {
+    sampler?.triggerRelease(note, time ?? Tone.now())
+  }
+
+  function releaseAll(time?: number) {
+    if (time !== undefined) {
+      sampler?.releaseAll(time)
+    } else {
+      sampler?.releaseAll()
+    }
   }
 
   return {
@@ -87,6 +96,7 @@ export function useAudioEngine(): AudioEngine {
     instrument: readonly(instrument),
     attack,
     release,
+    releaseAll,
     init,
     setInstrument,
   }

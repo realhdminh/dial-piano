@@ -2,9 +2,19 @@ import { ref, onUnmounted } from 'vue'
 import { liveQuery } from 'dexie'
 import type { RecordedEvent } from '@/composables/useRecorder'
 import { DEFAULT_INSTRUMENT, type InstrumentId } from '@/instruments'
-import { db, addTrack, removeTrack, type Track } from '@/db/dialPianoDb'
+import {
+  db,
+  addTrack,
+  removeTrack,
+  listTracksForExport,
+  buildTracksExport,
+  parseTracksExport,
+  importTracksPayload,
+  type Track,
+  type TracksExportPayload,
+} from '@/db/dialPianoDb'
 
-export type { Track } from '@/db/dialPianoDb'
+export type { Track, TracksExportPayload } from '@/db/dialPianoDb'
 
 export function useTracks() {
   const tracks = ref<Track[]>([])
@@ -48,5 +58,15 @@ export function useTracks() {
     return tracks.value.find((t) => t.id === id)
   }
 
-  return { tracks, saveTrack, deleteTrack, getTrack }
+  async function exportTracks(ids?: readonly string[]): Promise<TracksExportPayload> {
+    const rows = await listTracksForExport(ids)
+    return buildTracksExport(rows)
+  }
+
+  async function importFromJson(raw: unknown): Promise<number> {
+    const payload = parseTracksExport(raw)
+    return importTracksPayload(payload)
+  }
+
+  return { tracks, saveTrack, deleteTrack, getTrack, exportTracks, importFromJson }
 }

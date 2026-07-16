@@ -6,6 +6,8 @@ const props = defineProps<{
   label: string
   note: string
   accentColor: string
+  /** External press (e.g. computer keyboard). */
+  active?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -13,31 +15,37 @@ const emit = defineEmits<{
   release: [note: string]
 }>()
 
-const isPressed = shallowRef(false)
+const pointerPressed = shallowRef(false)
 const activeTrails = shallowRef<number[]>([])
 let trailCounter = 0
 
 const activePointers = new Set<number>()
+
+const isPressed = computed(() => props.active === true || pointerPressed.value)
 
 const keyStyle = computed(() => ({
   '--key-accent': props.accentColor,
   '--glow-color': props.accentColor,
 }))
 
-function handleAttack(pointerId: number) {
-  if (activePointers.has(pointerId)) return
-  activePointers.add(pointerId)
-  isPressed.value = true
-  emit('attack', props.note)
-
+function spawnTrail() {
   const id = ++trailCounter
   activeTrails.value = [...activeTrails.value, id]
 }
 
+function handleAttack(pointerId: number) {
+  if (activePointers.has(pointerId)) return
+  activePointers.add(pointerId)
+  pointerPressed.value = true
+  emit('attack', props.note)
+  spawnTrail()
+}
+
 function handleRelease(pointerId: number) {
+  if (!activePointers.has(pointerId)) return
   activePointers.delete(pointerId)
   if (activePointers.size === 0) {
-    isPressed.value = false
+    pointerPressed.value = false
   }
   emit('release', props.note)
 }
@@ -62,10 +70,12 @@ function onPointerCancel(e: PointerEvent) {
 
 <template>
   <button
+    type="button"
     class="dial-key relative flex min-h-0 min-w-0 cursor-pointer select-none items-center justify-center overflow-hidden bg-zinc-950 text-center transition-[background-color,box-shadow] duration-100"
     :class="isPressed && 'dial-key--pressed animate-glow-pulse'"
     :style="keyStyle"
     :aria-label="note"
+    :aria-pressed="isPressed"
     @pointerdown.prevent="onPointerDown"
     @pointerup="onPointerUp"
     @pointercancel="onPointerCancel"
@@ -79,7 +89,7 @@ function onPointerCancel(e: PointerEvent) {
 
     <span
       class="dial-key-label font-black tabular-nums leading-none tracking-tighter transition-colors duration-100"
-      :class="isPressed ? 'text-[var(--key-accent)]' : 'text-white/92'"
+      :class="isPressed ? 'text-(--key-accent)' : 'text-white/92'"
     >
       {{ label }}
     </span>
