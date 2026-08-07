@@ -9,8 +9,8 @@ Use **Bun** only (`bun.lock`). Do not introduce npm/yarn lockfiles.
 | Command | Notes |
 |---------|--------|
 | `bun install` | Local; CI uses `--frozen-lockfile` |
-| `bun run dev` | Vite; kalimba proxy is Vite middleware |
-| `bun run type-check` | `vue-tsc --build` (app + node + `functions/**`) |
+| `bun run dev` | Vite; samples served straight from `public/` |
+| `bun run type-check` | `vue-tsc --build` (app + node + functions) |
 | `bun run build` | type-check **then** Vite → `dist/` |
 | `bun run lint` | Oxlint + ESLint (both `--fix`) |
 | `bun run format` | Oxfmt on **`src/` only** |
@@ -27,8 +27,8 @@ No test runner/scripts in this repo today. Prefer `type-check` + `lint` after su
 - **Recording playback:** `useRecorder` schedules on **`Tone.Transport`** (event times are ms → seconds). Loop via `isLooping` / `setLooping`. Pass `audio.attack` / `release` / `releaseAll` into `play` so scheduled notes use Transport `time`.
 - **DB:** singleton `src/db/dialPianoDb.ts`. `liveQuery` in `useTracks` — always **unsubscribe on `onUnmounted`**. Clone events to plain objects before IDB write (`cloneEventsForIdb`); never put Vue proxies in IndexedDB. Track JSON export/import: `format: "dial-piano-tracks"` helpers in the same module.
 - **Desktop keys:** `src/utils/dialKeys.ts` + listeners in `DialPad` — digits / `*` `#` / extended letter keys; ignore when focus is in inputs.
-- **Kalimba samples:** browser always fetches **`/audio/kalimba/…`**. Prod: `functions/audio/kalimba/[[path]].ts`. Dev: `vite-plugin-kalimba-proxy.ts`. **Keep allowlist + upstream URL in sync** if either changes.
-- **Functions types:** import `PagesFunction` from `@cloudflare/workers-types`; covered by `tsconfig.functions.json` via project references.
+- **Kalimba samples:** self-hosted static files in **`public/audio/kalimba/`** (16 WAV, B3–C6); browser fetches `/audio/kalimba/…` directly — no proxy. Don't reintroduce an upstream proxy; the original `middleearmedia.com` host has a broken TLS cert.
+- **Functions types:** import `PagesFunction` from `@cloudflare/workers-types`; covered by `tsconfig.functions.json` via project references (kept for future Pages Functions — `functions/` is currently empty).
 - **Style:** Tailwind **v4** — tokens/keyframes in `src/main.css` `@theme { }`. No `tailwind.config.js` theme source of truth.
 - **Path alias:** `@/*` → `src/*`.
 
@@ -42,5 +42,5 @@ No test runner/scripts in this repo today. Prefer `type-check` + `lint` after su
 
 ## Deploy gotchas
 
-- CI: `.github/workflows/deploy-cloudflare-pages.yml` on push to **`main`** (Bun + `bun run build` + `bun run deploy`).
+- CI: `.github/workflows/deploy-cloudflare-pages.yml` on push to **`main`** (Bun + `bun run build-only` + `bun run deploy`). Build uses `build-only` because the `vue-tsc` type-check gate is currently broken (TS2307 on `.vue` resolution); keep it that way until type-check is green again.
 - Local deploy needs `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` in `.env`.

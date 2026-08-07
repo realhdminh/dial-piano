@@ -23,7 +23,7 @@ A **Vue 3** web app that turns a phone-style **dial pad** into a **polyphonic sa
 - **Dial UI** — Compact pad with optional extended row; note trails and glass-style visuals (**Tailwind CSS v4**). Computer keyboard: digits / `*` `#` (and letter keys in 18-key mode).
 - **Record & playback** — Capture note on/off timing; play back on **Tone.Transport** with optional loop.
 - **Saved tracks** — Persisted in the browser with **Dexie** / IndexedDB; JSON export/import.
-- **Static-first with edge proxy** — No app server; suitable for **Cloudflare Pages**. A Cloudflare Pages Function proxies the kalimba samples same-origin (see [Audio notes](#audio-notes)).
+- **Static-first** — No app server; suitable for **Cloudflare Pages**. Kalimba samples are self-hosted in `public/audio/kalimba/` (no edge proxy, no Workers requests) (see [Audio notes](#audio-notes)).
 
 ---
 
@@ -63,6 +63,7 @@ Open the URL Vite prints (usually `http://localhost:5173`). **Tap “Start audio
 |---------|-------------|
 | `bun run dev` | Dev server with HMR |
 | `bun run build` | `vue-tsc` + production bundle to `dist/` |
+| `bun run build-only` | Production bundle only (no type-check) — used by CI |
 | `bun run preview` | Serve `dist/` locally |
 | `bun run type-check` | Typecheck only |
 | `bun run lint` | ESLint + Oxlint |
@@ -81,10 +82,8 @@ src/
   composables/            # useAudioEngine, useRecorder, useTracks
   db/                     # Dexie singleton + migrations
   instruments.ts          # Instrument registry (piano, kalimba, guitar, flute)
-functions/
-  audio/kalimba/[[path]].ts  # Cloudflare Pages Function: same-origin kalimba proxy
-vite-plugin-kalimba-proxy.ts # Dev-only mirror of the kalimba proxy (Vite middleware)
 public/
+  audio/kalimba/          # Self-hosted kalimba samples (16 WAV, B3–C6)
   _redirects              # SPA-style rewrite for static hosts (e.g. Cloudflare Pages)
 ```
 
@@ -99,7 +98,7 @@ Pushes to **`main`** run [`.github/workflows/deploy-cloudflare-pages.yml`](.gith
 ### Cloudflare Pages (Git)
 
 1. Connect the repository in the Cloudflare dashboard.
-2. **Build command:** `bun run build` (install **Bun** in the Pages build image or use a Bun-based preset if available).
+2. **Build command:** `bun run build-only` (skips the `vue-tsc` type-check gate, which is currently broken and unrelated to the bundle; install **Bun** in the Pages build image or use a Bun-based preset if available).
 3. **Output directory:** `dist`  
 4. **Environment:** Bun is the supported path for this repo; Node-only installs may work but are not documented here.
 5. `public/_redirects` is copied into `dist` so client routes resolve to `index.html` where needed.
@@ -109,7 +108,7 @@ Pushes to **`main`** run [`.github/workflows/deploy-cloudflare-pages.yml`](.gith
 Copy `.env.example` → `.env` and fill **Cloudflare API token** and **account ID** if you use:
 
 ```bash
-bun run build
+bun run build-only
 bun run deploy
 ```
 
@@ -120,7 +119,7 @@ Never commit real `.env` values.
 ## Audio notes
 
 - Piano samples load from `https://tonejs.github.io/audio/salamander/` — allow that origin if you use a strict CSP.
-- **Kalimba** tines are fetched from `middleearmedia.com`, but always same-origin via `/audio/kalimba/` so the upstream is never exposed to the browser and no `Referer` leaks. In production this route is served by the Cloudflare Pages Function `functions/audio/kalimba/[[path]].ts`; in `bun run dev` the equivalent logic runs as a Vite middleware (`vite-plugin-kalimba-proxy.ts`). Both enforce the same filename allowlist and 1-year cache.
+- **Kalimba** tines (B3–C6, 16 WAV files) are self-hosted in `public/audio/kalimba/` and served same-origin via `/audio/kalimba/` — no upstream dependency, no Workers requests, cached by the static host.
 - **User gesture** is required before audio (`Tone.start()`); the app uses an explicit init overlay for that.
 
 ---

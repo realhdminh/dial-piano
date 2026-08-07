@@ -61,7 +61,7 @@ const PIANO_AUDIO: SamplerAudioConfig = {
   reverbWet: 0.24,
 }
 
-/** Kalimba samples (B3–C6) — same-origin via `/audio/kalimba/` edge/dev proxy. */
+/** Kalimba samples (B3–C6) — self-hosted in `public/audio/kalimba/`. */
 const KALIMBA_AUDIO: SamplerAudioConfig = {
   kind: 'sampler',
   urls: {
@@ -180,6 +180,3 @@ export const INSTRUMENT_LIST: InstrumentDef[] = [
 ]
 
 export const DEFAULT_INSTRUMENT: InstrumentId = 'piano'
-
-/** @deprecated Use INSTRUMENTS.piano.accent */
-export const PIANO_ACCENT = INSTRUMENTS.piano.accent

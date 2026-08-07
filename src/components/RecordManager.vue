@@ -213,7 +213,7 @@ async function handleImportFile(e: Event) {
         <ListMusic :size="20" />
         <span
           v-if="tracks.length"
-          class="absolute -right-1.5 -top-1 grid min-w-[14px] place-items-center rounded-full bg-white/20 px-0.5 text-[8px] font-bold tabular-nums text-white"
+          class="absolute -right-1.5 -top-1 grid min-w-3.5 place-items-center rounded-full bg-white/20 px-0.5 text-[8px] font-bold tabular-nums text-white"
         >
           {{ tracks.length }}
         </span>
